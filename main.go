@@ -9,14 +9,14 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
+	"strings"
 )
 
 func main() {
 	searcher := Searcher{}
 	err := searcher.Load("completeworks.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
+	checkError(err)
 
 	fs := http.FileServer(http.Dir("./static"))
 	http.Handle("/", fs)
@@ -30,8 +30,12 @@ func main() {
 
 	fmt.Printf("Listening on port %s...", port)
 	err = http.ListenAndServe(fmt.Sprintf(":%s", port), nil)
-	if err != nil {
-		log.Fatal(err)
+	checkError(err)
+}
+
+func checkError(e error) {
+	if e != nil {
+		log.Fatal(e)
 	}
 }
 
@@ -68,15 +72,23 @@ func (s *Searcher) Load(filename string) error {
 		return fmt.Errorf("Load: %w", err)
 	}
 	s.CompleteWorks = string(dat)
-	s.SuffixArray = suffixarray.New(dat)
+	s.SuffixArray = suffixarray.New([]byte(strings.ToLower(string(dat))))
 	return nil
 }
 
 func (s *Searcher) Search(query string) []string {
-	idxs := s.SuffixArray.Lookup([]byte(query), -1)
+	idxs := s.SuffixArray.Lookup([]byte(strings.ToLower(query)), -1)
 	results := []string{}
 	for _, idx := range idxs {
-		results = append(results, s.CompleteWorks[idx-250:idx+250])
+		start,end := idx,idx
+		for start >0 && s.CompleteWorks[start]!='\n' {
+			start--
+		}
+		for end < len(s.CompleteWorks) && s.CompleteWorks[end]!='\n'{
+			end++
+		}
+		results = append(results, s.CompleteWorks[start:idx] + "<b>" +s.CompleteWorks[idx:idx+len(query)] + "</b>" + s.CompleteWorks[idx+len(query):end])
 	}
+	results = append(results, "<br><b>"+strconv.Itoa(len(idxs))+" Results found</b>")
 	return results
 }

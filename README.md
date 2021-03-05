@@ -29,4 +29,12 @@ We will be primarily evaluating based on how well the search works for users. A 
 current state, can be deployed easily on Heroku's free tier.
 3. In your submission, share with us what changes you made and how you would prioritize changes if you had more time.
 
+## Solved
+1. Search Criteria from case-sensitive to case-insensitive.
+2. Hard-bond text around query to dynamic single line output which has the query string.
+3. Number of Search result with easy to view search strings.
 
+## Can be solved the issues:
+1. Substring mapping results, rather than Lookup: use the regex.
+2. Large file search, by using the bufio package read the file in chuncks.
+3. Search indexing, or prioritizing the search result output by using the elasticsearch.
