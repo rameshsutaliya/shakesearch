@@ -38,3 +38,6 @@ current state, can be deployed easily on Heroku's free tier.
 1. Substring mapping results, rather than Lookup: use the regex.
 2. Large file search, by using the bufio package read the file in chuncks.
 3. Search indexing, or prioritizing the search result output by using the elasticsearch.
+
+### Live link
+https://still-ridge-07956.herokuapp.com/
